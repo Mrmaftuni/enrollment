@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برنامه تمرینی | محمد مفتونی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* MOHAMMAD MAFTUNI — BLACK × STEEL */
+    --navy:#161A1D;
+    --navy-dark:#0B0D0F;
+    --gold:#8F989F;
+    --gold-soft:#E8EBED;
+    --mint:#5F6971;
+    --pink:#A7ADB2;
+    --ink:#252A2E;
+    --line:#C9CED2;
+    --bg:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Vazirmatn',Tahoma,sans-serif;
+    background:linear-gradient(135deg,#F2F4F5 0%,#E9EBED 52%,#F7F8F8 100%);
+    color:var(--ink);
+    line-height:1.9;
+    font-size:15px;
+  }
+  .page{
+    max-width:860px;
+    margin:0 auto;
+    background:var(--bg);
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 0 40px rgba(20,25,29,.12);
+  }
+  .wrap{padding:0 22px 40px}
+
+  .titleblock{
+    background:linear-gradient(120deg,#0B0D0F 0%,#1B2024 58%,#3B444B 100%);
+    color:#fff;
+    text-align:center;
+    padding:26px 20px;
+    margin:26px 0 22px;
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(15,19,22,.20);
+  }
+  .titleblock h1{font-size:24px;font-weight:900}
+  .titleblock p{font-size:14px;color:#E1E5E8;margin-top:4px}
+
+  .athlete-card{
+    background:var(--gold-soft);
+    border:1.5px solid var(--gold);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:22px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px 16px;
+  }
+  .athlete-card .field{grid-column:span 1}
+  .athlete-card .field.full{grid-column:1 / -1}
+  @media (max-width:520px){.athlete-card{grid-template-columns:1fr}}
+
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--navy-dark);margin-bottom:5px}
+  .field input, .field textarea{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:9px 11px;
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+    background:#fff;
+  }
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--navy)}
+
+  /* تب‌های روز */
+  .day-tabs-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .day-tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:2px;
+    flex:1;
+  }
+  .add-day-btn{
+    flex:0 0 auto;
+    border:1.5px dashed var(--navy);
+    background:#F1F3F4;
+    color:var(--navy-dark);
+    border-radius:30px;
+    padding:11px 16px;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .add-day-btn:hover{background:var(--navy);color:#fff}
+  .day-tab{
+    flex:1 1 0;
+    min-width:70px;
+    text-align:center;
+    padding:11px 8px;
+    border-radius:30px;
+    font-weight:800;
+    font-size:14px;
+    cursor:pointer;
+    border:1.5px solid var(--line);
+    background:#fff;
+    color:var(--navy-dark);
+    transition:transform .12s, box-shadow .12s;
+    white-space:nowrap;
+  }
+  .day-tab:active{transform:scale(.96)}
+  .day-tab.active{
+    background:linear-gradient(90deg,#101316,#3E474E);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 14px rgba(20,25,29,.22);
+  }
+
+  .day-panel{display:none}
+  .day-panel.active{display:block}
+
+  .section{
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .section-head{
+    background:linear-gradient(90deg,#101316,#3E474E);
+    color:#fff;
+    padding:11px 18px;
+    border-radius:30px;
+    font-weight:800;
+    font-size:16px;
+    text-align:center;
+    margin-bottom:18px;
+    box-shadow:0 4px 14px rgba(20,25,29,.18);
+  }
+
+  .meta-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px 16px;
+    margin-bottom:18px;
+  }
+  @media (max-width:520px){.meta-row{grid-template-columns:1fr}}
+
+  /* جدول تمرین‌ها با CSS Grid (به‌جای <table>) تا در مرورگرهای موبایل با RTL درست عرض ستون‌ها رعایت بشه و متن هیچ‌وقت پشت ستون بعدی نره */
+  .table-wrap{overflow-x:auto;border-radius:12px;border:1.5px solid var(--line)}
+  .wk-table{min-width:640px}
+  .wk-row{
+    display:grid;
+    grid-template-columns:26px 22% 13% 12% 11% 27% 30px;
+    gap:6px;
+    align-items:start;
+    padding:7px 6px;
+    border-bottom:1px solid var(--line);
+  }
+  .row-body .wk-row:last-child{border-bottom:none}
+  .wk-head{
+    background:var(--navy);
+    color:#fff;
+    font-weight:800;
+    font-size:12px;
+    align-items:center;
+    border-bottom:none;
+    padding:10px 6px;
+  }
+  .wk-head .wk-cell{text-align:center;justify-content:center;white-space:normal;word-break:break-word;line-height:1.3}
+  .wk-cell{display:flex;align-items:flex-start;justify-content:center;min-width:0}
+  .wk-cell.rownum{
+    align-items:center;
+    justify-content:center;
+    color:var(--gold);
+    font-weight:900;
+    font-size:13px;
+  }
+  .wk-head .rownum{color:#fff}
+  .wk-cell.del-cell{align-items:center;justify-content:center}
+
+  .wk-cell input{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:7px;
+    padding:6px 6px;
+    font-family:inherit;
+    font-size:12.5px;
+    color:var(--ink);
+    background:#fff;
+    text-align:center;
+    min-width:0;
+  }
+  .wk-cell input:focus{outline:none;border-color:var(--navy)}
+  .wk-cell textarea.f-wrap{
+    width:100%;
+    display:block;
+    border:1.5px solid var(--line);
+    border-radius:7px;
+    padding:6px 7px;
+    font-family:inherit;
+    font-size:12.5px;
+    color:var(--ink);
+    background:#fff;
+    text-align:right;
+    resize:none;
+    overflow:hidden;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    line-height:1.5;
+    min-height:30px;
+    min-width:0;
+  }
+  .wk-cell textarea.f-wrap:focus{outline:none;border-color:var(--navy)}
+
+  .row-del{
+    border:none;background:transparent;color:#FF8FC7;
+    font-size:17px;cursor:pointer;font-weight:900;line-height:1;
+  }
+  .row-del:hover{color:#252B30}
+
+  .row-actions{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start}
+  .add-row-btn{
+    border:1.5px dashed var(--navy);
+    background:#F1F3F4;
+    color:var(--navy-dark);
+    border-radius:30px;
+    padding:8px 18px;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .add-row-btn:hover{background:var(--navy);color:#fff}
+  .remove-row-btn{
+    border:1.5px dashed var(--pink);
+    background:#F2F3F4;
+    color:#59636B;
+    border-radius:30px;
+    padding:8px 18px;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .remove-row-btn:hover{background:var(--pink);color:#fff}
+
+  .tempo-key{
+    margin-top:14px;
+    font-size:12px;
+    color:#69737B;
+    background:#F3F5F6;
+    border-radius:10px;
+    padding:10px 14px;
+    line-height:1.8;
+  }
+
+  .actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:26px 0 8px;
+  }
+  .btn{
+    font-family:inherit;
+    font-size:15px;font-weight:800;
+    border:none;border-radius:30px;
+    padding:13px 30px;
+    cursor:pointer;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(90deg,#101316,#3E474E);color:#fff}
+  .btn-primary:hover{box-shadow:0 4px 14px rgba(108,92,231,.35)}
+  .btn-gold{background:linear-gradient(90deg,#667078,#9AA2A8);color:#fff}
+  .btn-gold:hover{box-shadow:0 4px 14px rgba(255,159,104,.4)}
+  .btn-pdf{background:linear-gradient(90deg,#59636B,#171B1E);color:#fff}
+  .btn-pdf:hover{box-shadow:0 4px 14px rgba(47,217,196,.4)}
+  .btn[disabled]{opacity:.6;cursor:not-allowed;transform:none !important}
+
+  /* حالت خروجی PDF: کنترل‌های ویرایشی مخفی می‌شوند (نمایش هر روز با اسکریپت مدیریت می‌شود) */
+  body.pdf-mode .day-tabs,
+  body.pdf-mode .add-day-btn,
+  body.pdf-mode .actions,
+  body.pdf-mode .add-row-btn,
+  body.pdf-mode .remove-row-btn,
+  body.pdf-mode .row-del,
+  body.pdf-mode .status{display:none !important}
+  body.pdf-mode input,
+  body.pdf-mode textarea.f-wrap{
+    border:1px solid transparent !important;
+    background:transparent !important;
+    box-shadow:none !important;
+  }
+  body.pdf-mode .page{box-shadow:none !important}
+
+  .status{text-align:center;margin-top:6px;font-size:13.5px;font-weight:700;color:var(--navy-dark);min-height:20px}
+  .status.err{color:#7A4B52}
+
+  .footer{
+    text-align:center;
+    font-size:12px;
+    color:#778188;
+    padding:18px 0 26px;
+  }
+
+  .titleblock h1{letter-spacing:-.3px}
+  .footer{letter-spacing:.2px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wrap">
+
+    <div class="titleblock">
+      <h1>برنامه تمرینی هفتگی</h1>
+      <p>محمد مفتونی — TRAINING ARCHITECT</p>
+    </div>
+
+    <div class="athlete-card">
+      <div class="field"><label>نام ورزشکار:</label><input type="text" id="athleteName" dir="rtl" placeholder="مثلاً: سارا احمدی"></div>
+      <div class="field"><label>تاریخ شروع برنامه:</label><input type="text" id="planDate" dir="rtl" placeholder="مثلاً: ۱۴۰۴/۰۵/۲۰"></div>
+      <div class="field full"><label>یادداشت کلی مربی (اختیاری):</label><input type="text" id="coachNote" dir="rtl" placeholder="مثلاً: تمرکز این هفته روی پایین‌تنه و قدرت است"></div>
+    </div>
+
+    <div class="day-tabs-row">
+      <div class="day-tabs" id="dayTabs">
+        <div class="day-tab active" data-day="1">روز ۱</div>
+        <div class="day-tab" data-day="2">روز ۲</div>
+        <div class="day-tab" data-day="3">روز ۳</div>
+        <div class="day-tab" data-day="4">روز ۴</div>
+      </div>
+      <button type="button" class="add-day-btn" id="addDayBtn" onclick="addDay()" title="افزودن روز جدید">+ روز جدید</button>
+    </div>
+
+    <!-- الگوی هر روز با اسکریپت ساخته می‌شود -->
+    <div id="daysContainer"></div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="copyAnswers()">📋 کپی برنامه (برای ارسال در تلگرام / واتساپ)</button>
+      <button class="btn btn-gold" onclick="downloadAnswers()">⬇ دانلود فایل برنامه</button>
+      <button class="btn btn-pdf" id="pdfBtn" onclick="downloadPDF()">📄 خروجی PDF</button>
+    </div>
+    <div class="status" id="status"></div>
+
+  </div>
+  <div class="footer">برنامه تمرینی هفتگی | محمد مفتونی — TRAINING ARCHITECT</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const TEMPO_KEY = 'کلید تمپو: اکسنتریک – توقف – کانسنتریک (مثلاً 3-1-1 یعنی 3 ثانیه پایین، 1 ثانیه توقف، 1 ثانیه بالا). ست و تکرار: تعداد ست × تعداد تکرار.';
+
+// نمونه تمرین‌های اولیه که فقط برای راهنمایی مربی به‌عنوان پیش‌فرض قرار گرفته‌اند
+const SAMPLE_ROWS = {
+  1: [],
+  2: [],
+  3: [{ex:'اسکوات پشت با هالتر', sr:'4 x 6–8', tempo:'3-0-1', rest:'120s', cue:'مرکز بدن سفت باشد، زانوها هم‌راستای پنجه پا. عمق تا موازی زمین یا پایین‌تر. (مثال)'}],
+  4: [{ex:'سوینگ کتل‌بل', sr:'5 x 15', tempo:'انفجاری', rest:'60s', cue:'هینج لگن، ضربه‌ی رو به جلو از لگن. قدرت از باسن، نه دست‌ها. (مثال)'}]
+};
+
+const EMPTY_ROWS_PER_DAY = 6;
+
+function makeRow(day, data){
+  data = data || {ex:'', sr:'', tempo:'', rest:'', cue:''};
+  const row = document.createElement('div');
+  row.className = 'wk-row';
+  row.innerHTML = `
+    <div class="wk-cell rownum">•</div>
+    <div class="wk-cell"><textarea class="f-wrap f-ex" rows="1" dir="rtl" placeholder="نام تمرین" oninput="autoGrow(this)">${escapeHtml(data.ex)}</textarea></div>
+    <div class="wk-cell"><input type="text" class="f-sr" dir="rtl" value="${escapeAttr(data.sr)}" placeholder="مثلاً 4x8"></div>
+    <div class="wk-cell"><input type="text" class="f-tempo" dir="rtl" value="${escapeAttr(data.tempo)}" placeholder="مثلاً 3-0-1"></div>
+    <div class="wk-cell"><input type="text" class="f-rest" dir="rtl" value="${escapeAttr(data.rest)}" placeholder="مثلاً 90s"></div>
+    <div class="wk-cell"><textarea class="f-wrap f-cue" rows="1" dir="rtl" placeholder="توضیح / نکته اجرا" oninput="autoGrow(this)">${escapeHtml(data.cue)}</textarea></div>
+    <div class="wk-cell del-cell"><button type="button" class="row-del" onclick="this.closest('.wk-row').remove()" title="حذف تمرین">✕</button></div>
+  `;
+  const wraps = row.querySelectorAll('.f-wrap');
+  wraps.forEach(t => autoGrow(t));
+  return row;
+}
+
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+window.addEventListener('resize', () => {
+  document.querySelectorAll('textarea.f-wrap').forEach(autoGrow);
+});
+
+function escapeAttr(s){
+  return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function escapeHtml(s){
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function buildDayPanel(day){
+  const panel = document.createElement('div');
+  panel.className = 'day-panel' + (day === 1 ? ' active' : '');
+  panel.id = 'day-panel-' + day;
+
+  panel.innerHTML = `
+    <div class="section">
+      <div class="section-head">روز ${persianDigits(day)} | برنامه تمرین</div>
+      <div class="meta-row">
+        <div class="field"><label>تمرکز روز:</label><input type="text" class="focus-input" dir="rtl" placeholder="مثلاً: پایین‌تنه و قدرت"></div>
+        <div class="field"><label>تاریخ:</label><input type="text" class="date-input" dir="rtl" placeholder="مثلاً: ۱۴۰۴/۰۵/۲۰"></div>
+      </div>
+      <div class="table-wrap">
+        <div class="wk-table">
+          <div class="wk-row wk-head">
+            <div class="wk-cell rownum">#</div>
+            <div class="wk-cell">تمرین</div>
+            <div class="wk-cell">ست×تکرار</div>
+            <div class="wk-cell">تمپو</div>
+            <div class="wk-cell">استراحت</div>
+            <div class="wk-cell">توضیح / نکته</div>
+            <div class="wk-cell"></div>
+          </div>
+          <div class="row-body"></div>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button type="button" class="add-row-btn" onclick="addRow(${day})">+ افزودن تمرین</button>
+        <button type="button" class="remove-row-btn" onclick="removeLastRow(${day})">− حذف آخرین تمرین</button>
+      </div>
+      <div class="tempo-key">${TEMPO_KEY}</div>
+    </div>
+  `;
+  return panel;
+}
+
+function addRow(day, data){
+  const tbody = document.querySelector('#day-panel-' + day + ' .row-body');
+  tbody.appendChild(makeRow(day, data));
+  renumberRows(day);
+}
+
+function removeLastRow(day){
+  const tbody = document.querySelector('#day-panel-' + day + ' .row-body');
+  if(tbody.children.length <= 1) return; // حداقل یک ردیف باقی بماند
+  tbody.removeChild(tbody.lastElementChild);
+  renumberRows(day);
+}
+
+function renumberRows(day){
+  const rows = document.querySelectorAll('#day-panel-' + day + ' .row-body .wk-row');
+  rows.forEach((row, i) => { row.querySelector('.rownum').textContent = persianDigits(i + 1); });
+}
+
+function persianDigits(n){
+  const map = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+  return String(n).replace(/[0-9]/g, d => map[d]);
+}
+
+let totalDays = 4;
+
+function initDays(){
+  const container = document.getElementById('daysContainer');
+  for(let day = 1; day <= totalDays; day++){
+    const panel = buildDayPanel(day);
+    container.appendChild(panel);
+    const rows = SAMPLE_ROWS[day] || [];
+    const totalRows = Math.max(EMPTY_ROWS_PER_DAY, rows.length + 4);
+    for(let i = 0; i < totalRows; i++){
+      addRow(day, rows[i]);
+    }
+  }
+}
+initDays();
+
+function addDay(){
+  totalDays += 1;
+  const day = totalDays;
+
+  // تب جدید
+  const tab = document.createElement('div');
+  tab.className = 'day-tab';
+  tab.dataset.day = String(day);
+  tab.textContent = 'روز ' + persianDigits(day);
+  document.getElementById('dayTabs').appendChild(tab);
+
+  // پنل جدید
+  const panel = buildDayPanel(day);
+  document.getElementById('daysContainer').appendChild(panel);
+  for(let i = 0; i < EMPTY_ROWS_PER_DAY; i++){
+    addRow(day);
+  }
+
+  // فعال‌سازی خودکار روز تازه‌اضافه‌شده
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t === tab));
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.toggle('active', p === panel));
+  tab.scrollIntoView({behavior:'smooth', inline:'end'});
+}
+
+// تب‌های روز
+document.getElementById('dayTabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.day-tab');
+  if(!tab) return;
+  const day = tab.dataset.day;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.toggle('active', t === tab));
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.toggle('active', p.id === 'day-panel-' + day));
+});
+
+function buildOutput(){
+  const athlete = document.getElementById('athleteName').value.trim() || '—';
+  const planDate = document.getElementById('planDate').value.trim() || '—';
+  const coachNote = document.getElementById('coachNote').value.trim();
+
+  const lines = [];
+  lines.push('برنامه تمرینی هفتگی — محمد مفتونی (TRAINING ARCHITECT)');
+  lines.push('ورزشکار: ' + athlete);
+  lines.push('تاریخ شروع: ' + planDate);
+  if(coachNote) lines.push('یادداشت مربی: ' + coachNote);
+  lines.push('');
+
+  for(let day = 1; day <= totalDays; day++){
+    const panel = document.getElementById('day-panel-' + day);
+    const focus = panel.querySelector('.focus-input').value.trim();
+    const date = panel.querySelector('.date-input').value.trim();
+    const rows = panel.querySelectorAll('.row-body .wk-row');
+    const exerciseLines = [];
+    let idx = 1;
+    rows.forEach(row => {
+      const ex = row.querySelector('.f-ex').value.trim();
+      if(!ex) return;
+      const sr = row.querySelector('.f-sr').value.trim();
+      const tempo = row.querySelector('.f-tempo').value.trim();
+      const rest = row.querySelector('.f-rest').value.trim();
+      const cue = row.querySelector('.f-cue').value.trim();
+      let line = idx + ') ' + ex;
+      const details = [];
+      if(sr) details.push('ست/تکرار: ' + sr);
+      if(tempo) details.push('تمپو: ' + tempo);
+      if(rest) details.push('استراحت: ' + rest);
+      if(details.length) line += '  —  ' + details.join('  |  ');
+      if(cue) line += '\n     نکته: ' + cue;
+      exerciseLines.push(line);
+      idx++;
+    });
+
+    if(!focus && !date && exerciseLines.length === 0) continue; // روز خالی رو رد کن
+
+    lines.push('——— روز ' + persianDigits(day) + ' ———');
+    if(focus) lines.push('تمرکز: ' + focus);
+    if(date) lines.push('تاریخ: ' + date);
+    if(exerciseLines.length){
+      lines.push(...exerciseLines);
+    } else {
+      lines.push('(تمرینی ثبت نشده)');
+    }
+    lines.push('');
+  }
+
+  return { text: lines.join('\n').trim() };
+}
+
+function validate(){
+  const status = document.getElementById('status');
+  const athlete = document.getElementById('athleteName');
+  if(!athlete.value.trim()){
+    status.textContent = '⚠ لطفا نام ورزشکار را وارد کن.';
+    status.className = 'status err';
+    athlete.scrollIntoView({behavior:'smooth', block:'center'});
+    athlete.focus();
+    return false;
+  }
+  return true;
+}
+
+async function copyAnswers(){
+  if(!validate()) return;
+  const status = document.getElementById('status');
+  const { text } = buildOutput();
+
+  const showSuccess = () => {
+    status.textContent = '✓ برنامه کپی شد! حالا در تلگرام یا واتساپ برای ورزشکار Paste کن.';
+    status.className = 'status';
+  };
+
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      showSuccess();
+      return;
+    }
+  }catch(e){ /* برو سراغ روش بعدی */ }
+
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if(ok){ showSuccess(); return; }
+  }catch(e){ /* برو سراغ روش بعدی */ }
+
+  if(navigator.share){
+    try{
+      await navigator.share({ text, title:'برنامه تمرینی' });
+      status.textContent = '✓ پنجره اشتراک‌گذاری باز شد؛ گزینه تلگرام/واتساپ را انتخاب کن.';
+      status.className = 'status';
+      return;
+    }catch(e){ /* کاربر لغو کرد یا پشتیبانی نشد */ }
+  }
+
+  status.textContent = '⚠ کپی خودکار روی این مرورگر کار نکرد. صفحه متن باز شد؛ لطفاً همه را انتخاب و کپی کن.';
+  status.className = 'status err';
+  openTextFallback(text);
+}
+
+async function downloadAnswers(){
+  if(!validate()) return;
+  const status = document.getElementById('status');
+  const { text } = buildOutput();
+  const name = document.getElementById('athleteName').value.trim() || 'ورزشکار';
+  const filename = 'برنامه تمرینی - ' + name + '.txt';
+
+  if(navigator.canShare){
+    try{
+      const file = new File(['\uFEFF' + text], filename, {type:'text/plain'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:filename});
+        status.textContent = '✓ پنجره ذخیره/ارسال باز شد.';
+        status.className = 'status';
+        return;
+      }
+    }catch(e){ /* کاربر لغو کرد یا پشتیبانی نشد؛ ادامه به روش بعدی */ }
+  }
+
+  try{
+    const blob = new Blob(['\uFEFF' + text], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    status.textContent = '✓ فایل برنامه دانلود شد. آن را برای ورزشکار ارسال کن.';
+    status.className = 'status';
+    return;
+  }catch(e){ /* برو سراغ روش بعدی */ }
+
+  status.textContent = '⚠ دانلود مستقیم روی این مرورگر پشتیبانی نشد. صفحه متن باز شد؛ می‌توانی آن را کپی یا Share کنی.';
+  status.className = 'status err';
+  openTextFallback(text);
+}
+
+function openTextFallback(text){
+  const w = window.open('', '_blank');
+  if(!w){
+    alert('مرورگر پنجره جدید را مسدود کرد. لطفاً popup را برای این صفحه فعال کن و دوباره تلاش کن.');
+    return;
+  }
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  w.document.write(
+    '<meta charset="utf-8"><title>برنامه تمرینی</title>' +
+    '<body style="font-family:Tahoma,sans-serif;direction:rtl;padding:20px;white-space:pre-wrap;word-break:break-word;line-height:1.9;">' +
+    '<p style="font-weight:bold;color:#252A2E;">همه متن زیر را انتخاب و کپی کن (Select All → Copy):</p>' +
+    '<div>' + escaped + '</div></body>'
+  );
+  w.document.close();
+}
+
+function makePdfClones(){
+  const clones = [];
+  document.querySelectorAll('.page input, .page textarea').forEach(el => {
+    const cs = getComputedStyle(el);
+    const div = document.createElement('div');
+    div.className = 'pdf-text-clone';
+    div.textContent = el.value || '';
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.wordBreak = 'break-word';
+    div.style.overflowWrap = 'anywhere';
+    div.style.textAlign = cs.textAlign;
+    div.style.fontFamily = cs.fontFamily;
+    div.style.fontSize = cs.fontSize;
+    div.style.fontWeight = cs.fontWeight;
+    div.style.lineHeight = cs.lineHeight;
+    div.style.padding = cs.padding;
+    div.style.color = cs.color;
+    div.style.minHeight = cs.minHeight;
+    div.style.width = '100%';
+    div.style.boxSizing = 'border-box';
+    div.style.direction = 'rtl';
+    el.insertAdjacentElement('afterend', div);
+    el.style.display = 'none';
+    clones.push({ el, div });
+  });
+  return clones;
+}
+
+function removePdfClones(clones){
+  clones.forEach(({ el, div }) => {
+    div.remove();
+    el.style.display = '';
+  });
+}
+
+async function downloadPDF(){
+  if(!validate()) return;
+  const status = document.getElementById('status');
+  const pdfBtn = document.getElementById('pdfBtn');
+
+  if(typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined'){
+    status.textContent = '⚠ کتابخانه‌ی ساخت PDF بارگذاری نشد. اتصال اینترنت خود را چک کن و دوباره تلاش کن.';
+    status.className = 'status err';
+    return;
+  }
+
+  pdfBtn.disabled = true;
+  const originalLabel = pdfBtn.textContent;
+  pdfBtn.textContent = '⏳ در حال ساخت PDF...';
+  status.textContent = 'در حال آماده‌سازی PDF، چند لحظه صبر کن...';
+  status.className = 'status';
+
+  // پنهان‌کردن کنترل‌های ویرایشی برای خروجی تمیز
+  document.body.classList.add('pdf-mode');
+  document.querySelectorAll('textarea.f-wrap').forEach(autoGrow);
+
+  // جایگزینی موقت input/textarea با متن ساده، چون html2canvas متن فارسی داخل فیلدهای فرم را درست رندر نمی‌کند
+  const clones = makePdfClones();
+
+  const panels = Array.from(document.querySelectorAll('.day-panel'));
+  const activeTab = document.querySelector('.day-tab.active');
+  const activeDay = activeTab ? activeTab.dataset.day : '1';
+
+  try{
+    if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 8;
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
+    const CAPTURE_WIDTH = 900;
+
+    async function captureAndAddPage(el, isFirstPage){
+      const canvas = await html2canvas(el, {
+        scale:2,
+        backgroundColor:'#ffffff',
+        useCORS:true,
+        windowWidth: CAPTURE_WIDTH
+      });
+      if(!isFirstPage) pdf.addPage();
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      let w = usableWidth;
+      let h = canvas.height * w / canvas.width;
+      if(h > usableHeight){
+        h = usableHeight;
+        w = canvas.width * h / canvas.height;
+      }
+      const x = margin + (usableWidth - w) / 2;
+      const y = margin;
+      pdf.addImage(imgData, 'JPEG', x, y, w, h);
+    }
+
+    // همه‌ی روزها را موقتاً پنهان کن تا هر بار فقط یکی نمایش داده و عکس گرفته بشه
+    panels.forEach(p => { p.style.display = 'none'; });
+
+    // صفحه ۱: هدر + اطلاعات ورزشکار + روز ۱ (تا جایی که جا بشه، در یک صفحه)
+    if(panels[0]){
+      panels[0].style.display = 'block';
+      await captureAndAddPage(document.querySelector('.page'), true);
+      panels[0].style.display = 'none';
+    }
+
+    // صفحات بعدی: هر روز، تنها و مرتب، روی صفحه‌ی جداگانه‌ی خودش
+    for(let i = 1; i < panels.length; i++){
+      panels[i].style.display = 'block';
+      await captureAndAddPage(panels[i], panels.length === 0 && i === 0);
+      panels[i].style.display = 'none';
+    }
+
+    // بازگرداندن نمایش روزها به حالت عادی طبق تب فعال
+    panels.forEach(p => {
+      p.style.display = '';
+      p.classList.toggle('active', p.id === 'day-panel-' + activeDay);
+    });
+
+    const name = document.getElementById('athleteName').value.trim() || 'ورزشکار';
+    const filename = 'برنامه تمرینی - ' + name + '.pdf';
+    const blob = pdf.output('blob');
+
+    // روش ۱: اشتراک‌گذاری با فایل (بهترین گزینه در iOS و اندروید)
+    if(navigator.canShare){
+      try{
+        const file = new File([blob], filename, {type:'application/pdf'});
+        if(navigator.canShare({files:[file]})){
+          await navigator.share({files:[file], title:filename});
+          status.textContent = '✓ پنجره ذخیره/ارسال PDF باز شد.';
+          status.className = 'status';
+          return;
+        }
+      }catch(e){ /* کاربر لغو کرد یا پشتیبانی نشد؛ ادامه به روش بعدی */ }
+    }
+
+    // روش ۲: دانلود مستقیم با blob
+    try{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      status.textContent = '✓ فایل PDF دانلود شد.';
+      status.className = 'status';
+      return;
+    }catch(e){ /* برو سراغ روش بعدی */ }
+
+    // روش ۳ (آخرین راه‌حل، مناسب iOS Safari قدیمی): باز کردن PDF در تب جدید
+    const url2 = URL.createObjectURL(blob);
+    window.open(url2, '_blank');
+    status.textContent = '✓ PDF در تب جدید باز شد؛ از آنجا می‌توانی آن را ذخیره یا اشتراک بگذاری.';
+    status.className = 'status';
+  }catch(err){
+    // اطمینان از بازگرداندن نمایش روزها در صورت بروز خطا
+    panels.forEach(p => {
+      p.style.display = '';
+      p.classList.toggle('active', p.id === 'day-panel-' + activeDay);
+    });
+    status.textContent = '⚠ ساخت PDF با خطا مواجه شد. لطفاً دوباره تلاش کن یا از گزینه دانلود متنی استفاده کن.';
+    status.className = 'status err';
+    console.error(err);
+  }finally{
+    removePdfClones(clones);
+    document.body.classList.remove('pdf-mode');
+    pdfBtn.disabled = false;
+    pdfBtn.textContent = originalLabel;
+  }
+}
+</script>
+</body>
+</html>
